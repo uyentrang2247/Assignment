@@ -1,6 +1,5 @@
 package assignmnet_pro192_tqt;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -41,21 +40,28 @@ public class Assignment_PRO192_TQT {
                     break;
                 case 2:
                     ArrayList<Tour> t1 = tourlist.getList();
-                    System.out.println("All tours in the system: ");
-                    for(Tour v : t1){
-                        System.out.println(v);
+                    if (t1.isEmpty()) {
+                        System.out.println("Do not have any tours in system.");
+                    } else {
+                        System.out.println("All tours in the system: ");
+                        for (Tour v : t1) {
+                            System.out.println(v);
+                        }
                     }
                     break;
                 case 3:
-                {
                     ArrayList<Tour> t2 = tourlist.DomesTourList();
-                    System.out.println("All domestic tours in the system: ");
-                    
-                    for(Tour v : t2){
-                        print
+                    if (t2.isEmpty()) {
+                        System.out.println("Do not have any domestic tours.");
+                    } else {
+                        System.out.println("All domestic tours in the system: ");
+
+                        for (Tour v : t2) {
+                            System.out.println(v);
+                        }
                     }
                     break;
-                }
+
                 case 4:
                     System.out.println("Average tour charge of all international tours is: " + tourlist.averageInterToursCharge());
                     break;
@@ -78,11 +84,11 @@ public class Assignment_PRO192_TQT {
                     break;
                 case 8:
                     System.out.println("Input a date to remove all tours'start date after that: ");
-                    String date = sc.nextLine(); 
-                    boolean flag; //break do while when iput valid day
+                    String date = sc.nextLine();
+                    boolean flag; //break do while when input valid day
                     int count = 0;
                     //input date and check if it's valid
-                    do{
+                    do {
                         flag = false;
                         try {
                             count = tourlist.removeTourDate(sdf.parse(date));
@@ -90,8 +96,8 @@ public class Assignment_PRO192_TQT {
                             e.getMessage();
                             flag = true;
                         }
-                    } while(flag);
-                    
+                    } while (flag);
+
                     if (count > 0) {
                         System.out.println("Remove Success " + count + "tours.");
                     } else {
@@ -102,8 +108,9 @@ public class Assignment_PRO192_TQT {
                     tourlist.sortTour();
                     break;
                 case 10:
+                    tourlist.updateTour();
                     break;
-                case 11: 
+                case 11:
                     tourlist.saveFile();
                     break;
                 case 12:
