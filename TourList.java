@@ -15,9 +15,9 @@ public class TourList {
     DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public ArrayList<Tour> getList() {
-        if(list.size() > 0){
-        return list;
-        }else {
+        if (list.size() > 0) {
+            return list;
+        } else {
             return null;
         }
     }
@@ -41,10 +41,12 @@ public class TourList {
             menuAdd();
             choice = sc.nextInt();
 
-            if(choice == 3) break;
+            if (choice != 1 && choice != 2) {
+                break;
+            }
             Tour tours = null;
-            switch(choice){
-                case 1: 
+            switch (choice) {
+                case 1:
                     tours = new DomesticTour();
                     break;
                 case 2:
@@ -72,13 +74,13 @@ public class TourList {
 
             System.out.print("Input tourPrice: ");
             tours.setTourPrice(sc.nextDouble());
-            
+
             System.out.print("Input tourTransport(true: Aircraft | false: Car): ");
             tours.setTourTransport(sc.nextBoolean());
 
             System.out.print("Input Start Date(dd/MM/yyyy): ");
             boolean flagDate; //break do while when iput valid day
-            do{
+            do {
                 flagDate = false;
                 try {
                     tours.setStartDate(sdf.parse(sc.next()));
@@ -87,11 +89,11 @@ public class TourList {
                     flagDate = true;
                 }
 
-            }   while(flagDate);
+            } while (flagDate);
 
             sc.nextLine();
             System.out.print("Input End Date(dd/MM/yyyy): ");
-            do{
+            do {
                 flagDate = false;
                 try {
                     tours.setEndDate(sdf.parse(sc.nextLine()));
@@ -100,19 +102,19 @@ public class TourList {
                     flagDate = true;
                 }
 
-            }   while(flagDate);
+            } while (flagDate);
 
             switch (choice) {
                 case 1:
                     System.out.print("Input tourGuideTip: ");
-                    ((DomesticTour)tours).setTourGuideTip(sc.nextDouble());
+                    ((DomesticTour) tours).setTourGuideTip(sc.nextDouble());
                     break;
                 case 2:
                     System.out.print("Input Entry Fee: ");
-                    ((InternationalTour)tours).setEntryFee(sc.nextDouble());
+                    ((InternationalTour) tours).setEntryFee(sc.nextDouble());
 
                     System.out.print("Input Aviation Tax: ");
-                    ((InternationalTour)tours).setAviationTax(sc.nextDouble());
+                    ((InternationalTour) tours).setAviationTax(sc.nextDouble());
                     break;
             }
 
@@ -138,6 +140,9 @@ public class TourList {
                 count++;
                 average += ((InternationalTour) v).tourCharge();
             }
+        }
+        if (count == 0) {
+            return 0;
         }
         return average / count;
     }
@@ -173,7 +178,7 @@ public class TourList {
                     break;
                 case 2:
                     sc.nextLine();
-                    System.out.print("Input tourTtile to search: ");
+                    System.out.print("Input tourTitle to search: ");
                     String tourTitleSearch = sc.nextLine();
                     ArrayList<Tour> arrListTourTitle = searchTourTitle(tourTitleSearch);
                     if (!arrListTourTitle.isEmpty()) {
@@ -188,7 +193,7 @@ public class TourList {
                     System.out.print("Input the start day of tours to search: ");
                     Date tourStartDateSearch = null;
                     boolean flag; //break do while when iput valid day
-                    do{
+                    do {
                         flag = false;
                         try {
                             tourStartDateSearch = sdf.parse(sc.nextLine());
@@ -196,8 +201,8 @@ public class TourList {
                             e.getMessage();
                             flag = true;
                         }
-                    } while(flag);
-                    
+                    } while (flag);
+
                     ArrayList<Tour> arrListTourStartDate = searchTourStartDate(tourStartDateSearch);
                     if (arrListTourStartDate.isEmpty()) {
                         System.out.println("The tour with given start day doesn't exist.");
@@ -208,7 +213,7 @@ public class TourList {
                     break;
                 case 4:
                     sc.nextLine();
-                    System.out.print("Input (true= aircraft, flase= car) to search: ");
+                    System.out.print("Input (true= aircraft, false= car) to search: ");
                     boolean tourTransportSearch = sc.nextBoolean();
                     ArrayList<Tour> arrListTourTransport = searchTourTransport(tourTransportSearch);
                     if (!arrListTourTransport.isEmpty()) {
@@ -225,13 +230,12 @@ public class TourList {
     }
 
     public Tour searchTourCode(String tourCodeSearch) {
-        Tour t = null;
         for (Tour v : list) {
             if (v.getTourCode().equals(tourCodeSearch)) {
-                t = v;
+                return v;
             }
         }
-        return t;
+        return null;
     }
 
     public ArrayList<Tour> searchTourTitle(String tourTitleSearch) {
@@ -319,19 +323,139 @@ public class TourList {
         Collections.sort(temp, new SortByTitle());
         for (int i = 0; i < temp.size(); i++) {
             System.out.println(temp.get(i));
-            
+
         }
-        
+
+    }
+
+    public void menuUpdate() {
+        System.out.println("========================================");
+        System.out.println("What information you want to change?");
+        System.out.println("0. Quit");
+        System.out.println("1. Tour code");
+        System.out.println("2. Tour title");
+        System.out.println("3. Tour price");
+        System.out.println("4. Tour transport");
+        System.out.println("5. Start date");
+        System.out.println("6. End date");
+        System.out.println("7. Tour guide tip (Domestic tour only)");
+        System.out.println("8. Aviation tax (International tour only)");
+        System.out.println("9. Entry fee (International tour only)");
+        System.out.println("========================================");
+        System.out.print("Input choice: ");
+    }
+
+    public void updateTour() {
+        System.out.print("ID: ");
+        String ID = sc.nextLine();
+        Tour tour = searchTourCode(ID);
+        if (tour == null) {
+            System.out.println("Your tourcode doesn't exist!");
+        } else {
+            boolean isDomestic = (tour instanceof DomesticTour ? true : false);
+            int choise;
+            do {
+                menuUpdate();
+                choise = sc.nextInt();
+                if (choise == 0) {
+                    break;
+                }
+                switch (choise) {
+                    case 1:
+                        String tourCode;
+                        boolean flag;
+                        sc.nextLine();
+                        do {
+                            flag = false;
+                            System.out.print("Input tourCode: ");
+                            tourCode = sc.nextLine();
+                            if (!checkTourCode(tourCode)) {
+                                System.out.println("tourCode is already exist. Try again!");
+                                flag = true;
+                            }
+                        } while (flag);
+                        tour.setTourCode(tourCode);
+                        break;
+                    case 2:
+                        System.out.print("Enter new tour title: ");
+                        sc.nextLine();
+                        tour.setTourTitle(sc.nextLine());
+                        break;
+                    case 3:
+                        System.out.println("Enter new tour price");
+                        tour.setTourPrice(sc.nextDouble());
+                        break;
+                    case 4:
+                        System.out.print("Enter new tourTransport(true: Aircraft | false: Car): ");
+                        tour.setTourTransport(sc.nextBoolean());
+                        break;
+                    case 5:
+                        System.out.print("Enter new Start Date(dd/MM/yyyy): ");
+                        boolean flagDate; //break do while when iput valid day
+                        do {
+                            flagDate = false;
+                            try {
+                                tour.setStartDate(sdf.parse(sc.next()));
+                            } catch (ParseException e) {
+                                System.out.println("Incorrect Date Format! Please try again!");
+                                flagDate = true;
+                            }
+
+                        } while (flagDate);
+                        break;
+                    case 6:
+                        System.out.print("Enter new End Date(dd/MM/yyyy): ");
+                        do {
+                            flagDate = false;
+                            try {
+                                tour.setEndDate(sdf.parse(sc.nextLine()));
+                            } catch (ParseException e) {
+                                System.out.println("Incorrect Date Format! Please try again!");
+                                flagDate = true;
+                            }
+
+                        } while (flagDate);
+                        break;
+                    case 7:
+                        if (isDomestic) {
+                            System.out.print("Input tourGuideTip: ");
+                            ((DomesticTour) tour).setTourGuideTip(sc.nextDouble());
+                        } else {
+                            System.out.println("This option only for domestic tour");
+                        }
+                        break;
+                    case 8:
+                        if (!isDomestic) {
+                            System.out.print("Input Entry Fee: ");
+                            ((InternationalTour) tour).setEntryFee(sc.nextDouble());
+                        } else {
+                            System.out.println("This option only for International tour");
+                        }
+                        break;
+                    case 9:
+                        if (!isDomestic) {
+                            System.out.print("Input Aviation Tax: ");
+                            ((InternationalTour) tour).setAviationTax(sc.nextDouble());
+                        } else {
+                            System.out.println("This option only for International tour");
+                        }
+                        break;
+                    default:
+                        System.out.println("Your option is invalid! Try again!");
+                }
+
+            } while (choise >= 1 && choise <= 8);
+        }
     }
 
     public void saveFile() {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("Tourdata.txt"));
-            for(Tour v : list){
-            oos.writeObject(v);
+            for (Tour v : list) {
+                oos.writeObject(v);
             }
             oos.close();
-            
+
         } catch (NotSerializableException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -343,24 +467,24 @@ public class TourList {
         ArrayList<Tour> inTour = new ArrayList<>();
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Tourdata.txt"));
-                while(true){
-                    Tour tours = null;
-                    try {
-                        tours = (Tour) ois.readObject();
-                        System.out.println(tours);
-                   
-                    } catch (Exception e) {
-                        System.out.println("Read complete!");
-                        break;
-                    }
-                    if(tours != null){
-                        inTour.add(tours);
-                    }
+            while (true) {
+                Tour tours = null;
+                try {
+                    tours = (Tour) ois.readObject();
+                    System.out.println(tours);
+
+                } catch (Exception e) {
+                    System.out.println("Read complete!");
+                    break;
                 }
+                if (tours != null) {
+                    inTour.add(tours);
+                }
+            }
             ois.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
 }
